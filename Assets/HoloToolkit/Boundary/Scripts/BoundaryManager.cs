@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
 using System.Collections.Generic;
 using UnityEngine.XR;
 using UnityEngine.XR.WSA;
@@ -21,7 +21,7 @@ namespace HoloToolkit.Unity.Boundary
         public GameObject FloorQuad;
         private GameObject floorQuadInstance;
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
         [SerializeField]
         [Tooltip("Approximate max Y height of your space.")]
         private float boundaryHeight = 10f;
@@ -37,11 +37,11 @@ namespace HoloToolkit.Unity.Boundary
         // Defaulting coordinate system to Stationary for transparent headsets, like HoloLens.
         // This puts the origin (0, 0, 0) at the first place where the user started the application.
         private TrackingSpaceType transparentTrackingSpaceType = TrackingSpaceType.Stationary;
-#endif
 
         // Testing in the editor found that this moved the floor out of the way enough, and it is only
         // used in the case where a headset isn't attached. Otherwise, the floor is positioned like normal.
         private readonly Vector3 floorPositionInEditor = new Vector3(0f, -3f, 0f);
+#endif
 
         [SerializeField]
         private bool renderFloor = true;
@@ -77,15 +77,14 @@ namespace HoloToolkit.Unity.Boundary
         {
             base.Awake();
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
             if (HolographicSettings.IsDisplayOpaque)
             {
                 XRDevice.SetTrackingSpaceType(opaqueTrackingSpaceType);
             }
             else
             {
-                // Removed for now, until the HoloLens tracking space type story is more clear.
-                //XRDevice.SetTrackingSpaceType(transparentTrackingSpaceType);
+                XRDevice.SetTrackingSpaceType(transparentTrackingSpaceType);
 
                 Destroy(this);
                 return;
@@ -112,16 +111,14 @@ namespace HoloToolkit.Unity.Boundary
 
         private void SetBoundaryRendering()
         {
-#if UNITY_2017_2_OR_NEWER
             // TODO: BUG: Unity: configured bool always returns false in 2017.2.0p2-MRTP5.
             if (UnityEngine.Experimental.XR.Boundary.configured)
             {
                 UnityEngine.Experimental.XR.Boundary.visible = renderBoundary;
             }
-#endif
         }
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
         private void RenderFloorQuad()
         {
             if (FloorQuad != null && XRDevice.GetTrackingSpaceType() == TrackingSpaceType.RoomScale)

@@ -103,12 +103,14 @@ namespace HoloToolkit.Unity.SpatialMapping
         private readonly Queue<SurfaceId> surfaceWorkQueue = new Queue<SurfaceId>();
 #endif
 
+#if UNITY_WSA
         /// <summary>
         /// To prevent too many meshes from being generated at the same time, we will
         /// only request one mesh to be created at a time.  This variable will track
         /// if a mesh creation request is in flight.
         /// </summary>
         private SurfaceObject? outstandingMeshRequest = null;
+#endif
 
         /// <summary>
         /// When surfaces are replaced or removed, rather than destroying them, we'll keep

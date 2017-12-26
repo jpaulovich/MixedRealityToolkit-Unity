@@ -9,7 +9,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 #endif
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
 using GLTF;
 using System.Collections;
 using UnityEngine.XR.WSA.Input;
@@ -51,9 +51,11 @@ namespace HoloToolkit.Unity.InputModule
         [SerializeField]
         protected UnityEngine.Material GLTFMaterial;
 
+#if UNITY_WSA
         // This will be used to keep track of our controllers, indexed by their unique source ID.
         private Dictionary<string, MotionControllerInfo> controllerDictionary = new Dictionary<string, MotionControllerInfo>(0);
         private List<string> loadingControllers = new List<string>();
+#endif
 
         private MotionControllerInfo leftControllerModel;
         private MotionControllerInfo rightControllerModel;
@@ -70,7 +72,7 @@ namespace HoloToolkit.Unity.InputModule
         {
             base.Awake();
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
             foreach (var sourceState in InteractionManager.GetCurrentReading())
             {
                 if (sourceState.source.kind == InteractionSourceKind.Controller)
@@ -109,7 +111,7 @@ namespace HoloToolkit.Unity.InputModule
         {
             base.OnDestroy();
 
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
             InteractionManager.InteractionSourceDetected -= InteractionManager_InteractionSourceDetected;
             InteractionManager.InteractionSourceLost -= InteractionManager_InteractionSourceLost;
             Application.onBeforeRender -= Application_onBeforeRender;
@@ -125,7 +127,7 @@ namespace HoloToolkit.Unity.InputModule
 
         private void UpdateControllerState()
         {
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
             foreach (var sourceState in InteractionManager.GetCurrentReading())
             {
                 MotionControllerInfo currentController;
@@ -182,7 +184,7 @@ namespace HoloToolkit.Unity.InputModule
             return !float.IsNaN(newPosition.x) && !float.IsNaN(newPosition.y) && !float.IsNaN(newPosition.z) &&
                 !float.IsInfinity(newPosition.x) && !float.IsInfinity(newPosition.y) && !float.IsInfinity(newPosition.z);
         }
-#if UNITY_WSA && UNITY_2017_2_OR_NEWER
+#if UNITY_WSA
         private void InteractionManager_InteractionSourceDetected(InteractionSourceDetectedEventArgs obj)
         {
             StartTrackingController(obj.state.source);
